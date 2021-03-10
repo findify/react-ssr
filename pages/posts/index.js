@@ -5,6 +5,8 @@ import { createWidgetCreator } from '../../components/Findify'
 import { useItems } from '@findify/react-connect'
 import { Grid, Item } from '../../components/ProductCard';
 
+const Search = createWidgetCreator('search', '680d373d-06b3-442b-bebc-d35a5b0868b3')
+
 const RenderItems = () => {
   const { items } = useItems();
   return (
@@ -17,11 +19,6 @@ const RenderItems = () => {
     </Grid>
   )
 }
-
-const Search = createWidgetCreator('search', {
-  key: '680d373d-06b3-442b-bebc-d35a5b0868b3',
-  user: { uid: "IQnXnYbY9f5FDRIn", sid: "A3Y0uoRK5H8S0vv0" }
-})
 
 export default function FirstPost({ state }) {
   return (
@@ -42,9 +39,9 @@ export default function FirstPost({ state }) {
   )
 }
 
-export async function getStaticProps({ preview = false }) {
-  const state = await Search.request(undefined, { q: 'white trr trr' });
+export async function getServerSideProps({ req }) {
+  const state = await Search.request({ req, params: { q: 'white trr trr' }});
   return {
-    props: { state: state.toJS() },
+    props: { state },
   }
 }

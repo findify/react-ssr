@@ -1,14 +1,11 @@
 import styled from '@emotion/styled'
-import { connectSuggestions, useSuggestions } from '@findify/react-connect/lib'
+import { useSuggestions } from '@findify/react-connect/lib'
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { createWidgetCreator } from './Findify'
 
 
-const Creator = createWidgetCreator('autocomplete', {
-  key: '680d373d-06b3-442b-bebc-d35a5b0868b3',
-  user: { uid: "IQnXnYbY9f5FDRIn", sid: "A3Y0uoRK5H8S0vv0" }
-});
+const Creator = createWidgetCreator('autocomplete', '680d373d-06b3-442b-bebc-d35a5b0868b3');
 
 function debounce(func, wait, immediate) {
 	var timeout;
@@ -24,7 +21,6 @@ function debounce(func, wait, immediate) {
 		if (callNow) func.apply(context, args);
 	};
 };
- 
 
 const Container = styled.div`
   position: relative;
@@ -33,10 +29,7 @@ const Container = styled.div`
   }
 `
 
-const Image = styled.img``
-const Suggestion = styled.button`
-  
-`
+const Suggestion = styled.button`  `
 
 const Suggestions = () => {
   const { suggestions } = useSuggestions();
@@ -52,24 +45,22 @@ const Suggestions = () => {
           .map((i) =>
             <Suggestion key={i.hashCode()} onClick={() => onClick(i.get('value'))}>
               {i.get('value')}
-            </Suggestion>)
+            </Suggestion>
+          )
           .toArray()
       }
     </div>
   )
 }
-export const Grid = styled.section`
-  display: flex;
-  align-items: top;
-  flex-wrap: wrap;
-`
+
 export const Autocomplete = () => {
   const [q, setQ] = useState('');
   const onChange = useCallback(debounce((e) => setQ(e.target.value), 1000), []);
+  const query = useMemo(() => ({ q }), [q]);
   return (
     <Container>
       <input onChange={onChange} />
-      <Creator.Provider query={{ q }}>
+      <Creator.Provider query={query}>
         <Suggestions />
       </Creator.Provider>
     </Container>
