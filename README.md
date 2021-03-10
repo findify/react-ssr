@@ -1,34 +1,40 @@
 > This is a minimal example of how to use Findify` [Agent](https://github.com/findify/findify-js/tree/develop/packages/agent) + [React-connect](https://github.com/findify/findify-js/tree/develop/packages/react-connect) in [Next.js](https://nextjs.org/learn) app.
 
 
-Findify SDK and Agent already includes server-side request logic. This repo will explain you how to separate Agents on server, make request including cookies and reuse response on client side.
+Findify SDK and Agent already include server-side request logic. This repo will explain how to separate Agents on server, make request that include cookies and reuse response on the client side.
 
 ## Setup
 ```bash
 yarn add @findify/react-connect @findify/change-emitter universal-cookie
+npm i @findify/react-connect @findify/change-emitter universal-cookie
 ```
 
 ## Create Feature
-Example of feature creator could be in `./components/Findify.js`. Feel free to modify the code, but keep in mind - you need to provide same user props on backend and client.
+Feature is an instance of Search, Autocomplete, Recommendation or Smart Collection.
+An axample of feature creator can be found in `./components/Findify.js`. 
+Feel free to modify the code, but keep in mind - you need to provide the **same user props** on the backend and the client.
 
 ```javascript
 
-// Will prepare closure with Agent and Provider for specific feature
+// We are preparing closure with Agent and Provider for specific feature
 // Analytics instance will be automatically created inside Provider and provided down via React context
-const Search = createWidgetCreator('[widget type]', '[API key]')
+const Search = createWidgetCreator('[widget type]', '[API key]');
 
  // Make request on Server and pick user from req.headers.cookies
 export async function getServerSideProps({ req, query }) {
-  // Request Body
-  const params = undefined || { q: query && query.q || '' };
-  // Persistent request params that will be merged with request params on every request
+  // Optional Request Body
+  const params = { q: query && query.q || '' };
+  
+  // Optional persistent request params that will be merged with request params on every request
   // `slot` for smart-collections and recommendations should be passed here
-  const defaults = undefined || {};
+  const defaults = { slot: 'collections/some-collections' };
+  
   const state = await Search.request({
     req, // Required if you need to pick user from cookies on server
     params,
     defaults
   });
+  
   return {
     props: { state, defaults, params },
   }
@@ -55,11 +61,16 @@ return ({ state, defaults }) => {
 
 You can also add `config` to providers prop. This prop will be available in all connects and hooks.
 
-All the connectors has analog as hook eq: `connectItems` = `useItems`. Hooks returning the same object as mixed to children props in HOCs.
+You can use either HOC or a Hook version of connector as they return the same props (`connectItems` = `useItems`).
 
 ## How To
-### Listen state update
+
+### Listen to state update
 ```js
+import { useQuery } from '@findify/react-connect'
+
+... 
+
 () => {
   const { query } = useQuery();
   useEffect(() => {
@@ -68,9 +79,12 @@ All the connectors has analog as hook eq: `connectItems` = `useItems`. Hooks ret
   return null
 }
 ```
-### Update other Agent
+### Update Agent in some component
+
 ```js
 const Search = createWidgetCreator('[widget type]', '[API key]')
+
+...
 
 () => {
   return (
@@ -81,6 +95,9 @@ const Search = createWidgetCreator('[widget type]', '[API key]')
 
 ### Send analytics
 ```js
+import { useQuery } from '@findify/react-connect
+
+...
 
 () => {
   // Every connector and hook provides analytics instance and meta params
