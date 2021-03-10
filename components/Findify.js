@@ -43,7 +43,6 @@ const getExistUser = (ctx) => {
       uid: cookies.get(_uidKey) || '0',
       sid: cookies.get(_sidKey) || '0'
     };
-
   }
 };
 
@@ -80,10 +79,10 @@ export const createWidgetCreator = (type, key) => {
     if (!defaults && !params) reject();
   });
 
-
   return {
     Provider,
     request,
-    setUser
+    setUser,
+    getAgent
   }
 };
