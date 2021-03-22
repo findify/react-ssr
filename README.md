@@ -103,6 +103,7 @@ Every connector or hook returns `{ analytics }` instance which could be used to 
 
 > Basic example
 ```js
+import { useConfig } from '@findify/react-connect'
 () => {
   const { analytics } = useConfig();
   analytics.sendEvent('view-page', { ... })
@@ -112,6 +113,7 @@ Every connector or hook returns `{ analytics }` instance which could be used to 
 ### Update cart event
 Should be sent after product has been added to the cart and contain the whole cat content
 ```javascript
+import { useConfig } from '@findify/react-connect'
 const { analytics } = useConfig();
 analytics.sendEvent('update-cart', {
     line_items: [ // Array of products
@@ -127,6 +129,8 @@ analytics.sendEvent('update-cart', {
 ### Purchase event
 
 ```javascript
+import { useConfig } from '@findify/react-connect'
+
 const { analytics } = useConfig();
  analytics.sendEvent('purchase', {
     currency: "EUR",
@@ -154,6 +158,7 @@ const { analytics } = useConfig();
 ### Product click event
 Product Item contains `sendAnalytics` method by calling which all necessary data will be send to Findify
 ```javascript
+import { useItems } from '@findify/react-connect'
   const { items } = useItems();
   return items.map((item) =>
     <a onClick={() => item.sendAnalytics()} key={item.hashCode()}>
@@ -161,5 +166,5 @@ Product Item contains `sendAnalytics` method by calling which all necessary data
     </a>
   )
 ```
-In case you would like to send analytics manually from out of Provider tree you can create analytics instance by your self:
+if you want to send analytics outside of Provider, you can create analytics instance manually.
 [Analytics Reference](https://developers.findify.io/page/findify-analytics#setup) 
