@@ -79,14 +79,73 @@ const Search = createWidgetCreator('[widget type]', '[API key]')
 }
 ```
 
-### Send analytics
-```js
+---
+You can find more information and cases of connectors and hooks in our [react-components](https://github.com/findify/findify-js/tree/develop/packages/react-components) repository.
 
+
+### Send analytics
+
+Every connector or hook returns `{ analytics }` instance which could be used to send events to Findify
+
+> Basic example
+```js
 () => {
-  // Every connector and hook provides analytics instance and meta params
-  const { analytics, meta } = useQuery();
+  const { analytics } = useConfig();
   analytics.sendEvent('view-page', { ... })
 }
 ```
----
-You can find more information and cases of connectors and hooks in our [react-components](https://github.com/findify/findify-js/tree/develop/packages/react-components) repository.
+
+### Update cart event
+Should be sent after product has been added to the cart and contain the whole cat content
+```javascript
+const { analytics } = useConfig();
+analytics.sendEvent('update-cart', {
+    line_items: [ // Array of products
+      {
+        item_id: "PRODUCT_ID_1",
+        quantity: 1,
+        unit_price: 22.35,
+        variant_item_id: "VARIANT_ID_1"
+      }
+    ]
+ });
+```
+### Purchase event
+
+```javascript
+const { analytics } = useConfig();
+ analytics.sendEvent('purchase', {
+    currency: "EUR",
+    line_items: [// Array of products
+      {
+        item_id: "PRODUCT_ID_1",
+        quantity: 1,
+        unit_price: 288.28,
+        variant_item_id: "VARIANT_ID_1"
+      },
+    ],
+    order_id: "ORDER_ID",
+    revenue: 288.28
+ });
+```
+### View page event
+Should be sent every time user lands on the product page
+```javascript
+const { analytics } = useConfig();
+ analytics.sendEvent('view-page', {
+  item_id: "PRODUCT_ID",
+  variant_item_id: "PRODUCT_VARIANT_ID"
+ })
+```
+### Product click event
+Product Item contains `sendAnalytics` method by calling which all necessary data will be send to Findify
+```javascript
+  const { items } = useItems();
+  return items.map((item) =>
+    <a onClick={() => item.sendAnalytics()} key={item.hashCode()}>
+      {item.get('title')}
+    </a>
+  )
+```
+In case you would like to send analytics manually from out of Provider tree you can create analytics instance by your self:
+[Analytics Reference](https://developers.findify.io/page/findify-analytics#setup) 
